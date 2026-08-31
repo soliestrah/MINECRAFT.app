@@ -414,6 +414,19 @@
   }
   .progress-bar{height:100%; background:var(--arcane);}
   .save-section{}
+  .gh-sync{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .gh-sync summary{
+    cursor:pointer;
+    font-weight:600;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  .gh-sync summary:hover{color:var(--text);}
+  .gh-sync .row2{margin-top:12px;}
   .file-label{
     background:var(--panel-2);
     border:1px solid var(--line);
@@ -554,6 +567,32 @@
         <input type="file" id="file-import" accept="application/json" style="display:none;">
       </div>
       <div class="copy-msg" id="save-msg"></div>
+
+      <details class="gh-sync">
+        <summary>☁️ Sauvegarde en ligne (GitHub)</summary>
+        <div class="row2">
+          <div>
+            <label for="gh-owner">Utilisateur / organisation</label>
+            <input type="text" id="gh-owner" placeholder="ton-pseudo">
+          </div>
+          <div>
+            <label for="gh-repo">Nom du dépôt</label>
+            <input type="text" id="gh-repo" placeholder="mon-etabli">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="gh-branch">Branche</label>
+            <input type="text" id="gh-branch" placeholder="main">
+          </div>
+          <div>
+            <label for="gh-token">Jeton d'accès (PAT)</label>
+            <input type="password" id="gh-token" placeholder="ghp_...">
+          </div>
+        </div>
+        <button type="button" class="btn-primary" id="btn-gh-save" style="margin-top:12px;">Enregistrer en ligne</button>
+        <div class="hint">Le jeton reste uniquement sur cet appareil (stocké dans le navigateur), jamais envoyé ailleurs qu'à l'API GitHub. Ces réglages sont partagés avec les autres outils du même site.</div>
+      </details>
     </div>
   </section>
 
@@ -1796,8 +1835,83 @@
   function showSaveMsg(msg){
     const el = document.getElementById('save-msg');
     el.textContent = msg;
-    setTimeout(() => { el.textContent = ''; }, 3000);
+    setTimeout(() => { el.textContent = ''; }, 4000);
   }
+
+  // ===================== SAUVEGARDE EN LIGNE (GITHUB) =====================
+  const GH_FILE_PATH = 'enchantements-config.json';
+  const ghFields = ['gh-owner', 'gh-repo', 'gh-branch', 'gh-token'];
+  const ghKeys = {'gh-owner': 'gh_owner', 'gh-repo': 'gh_repo', 'gh-branch': 'gh_branch', 'gh-token': 'gh_token'};
+
+  function loadGhSettings(){
+    ghFields.forEach(id => {
+      const saved = localStorage.getItem(ghKeys[id]);
+      if (saved) document.getElementById(id).value = saved;
+    });
+    if (!document.getElementById('gh-branch').value) document.getElementById('gh-branch').value = 'main';
+  }
+  function saveGhSettings(){
+    ghFields.forEach(id => {
+      localStorage.setItem(ghKeys[id], document.getElementById(id).value.trim());
+    });
+  }
+  ghFields.forEach(id => {
+    document.getElementById(id).addEventListener('change', saveGhSettings);
+  });
+  loadGhSettings();
+
+  async function saveToGitHub(){
+    const owner = document.getElementById('gh-owner').value.trim();
+    const repo = document.getElementById('gh-repo').value.trim();
+    const branch = document.getElementById('gh-branch').value.trim() || 'main';
+    const token = document.getElementById('gh-token').value.trim();
+    if (!owner || !repo || !token){
+      showSaveMsg('Renseigne utilisateur, dépôt et jeton GitHub.');
+      return;
+    }
+    saveGhSettings();
+    showSaveMsg('Envoi vers GitHub...');
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${GH_FILE_PATH}`;
+    try {
+      let sha = null;
+      const getRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}`, {
+        headers: {'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json'}
+      });
+      if (getRes.ok){
+        const info = await getRes.json();
+        sha = info.sha;
+      } else if (getRes.status !== 404){
+        const err = await getRes.json().catch(() => ({}));
+        throw new Error(err.message || ('Erreur ' + getRes.status));
+      }
+
+      const content = exportStateJSON();
+      const body = {
+        message: 'Mise à jour enchantements-config.json depuis le Grimoire',
+        content: btoa(unescape(encodeURIComponent(content))),
+        branch
+      };
+      if (sha) body.sha = sha;
+
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!putRes.ok){
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(err.message || ('Erreur ' + putRes.status));
+      }
+      showSaveMsg('Enregistré sur GitHub ✓');
+    } catch (err){
+      showSaveMsg('Échec : ' + err.message);
+    }
+  }
+  document.getElementById('btn-gh-save').addEventListener('click', saveToGitHub);
 
   document.getElementById('btn-download').addEventListener('click', () => {
     if (items.length === 0 && offers.length === 0 && books.length === 0){ showSaveMsg('Rien à sauvegarder pour le moment.'); return; }
