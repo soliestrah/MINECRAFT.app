@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Établi — Outils Minecraft</title>
+<style>
+  :root{
+    --stone: #2b2822;
+    --stone-2: #353128;
+    --panel: #38343027;
+    --panel-solid: #383430;
+    --panel-2: #423d33;
+    --line: #544e40;
+    --wood: #d9d2c1;
+    --wood-dim: #a39c8a;
+    --emerald: #6bab7a;
+    --emerald-dim: #4a8a63;
+    --text: #eae5d8;
+    --muted: #a89f8c;
+    --mono: ui-monospace, SFMono-Regular, "IBM Plex Mono", Consolas, "Liberation Mono", monospace;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{background:var(--stone);}
+  body{
+    margin:0;
+    background:var(--stone);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+  }
+  header{
+    padding:56px 24px 30px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .anvil{
+    font-size:2.2rem;
+    margin-bottom:10px;
+  }
+  header h1{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:2.6rem;
+    margin:0 0 10px;
+    letter-spacing:0.5px;
+    color:var(--text);
+  }
+  header h1 span{ color:var(--wood); }
+  header p{
+    margin:0 auto;
+    color:var(--muted);
+    font-size:1rem;
+    max-width:560px;
+    line-height:1.6;
+  }
+  main{
+    max-width:980px;
+    margin:0 auto;
+    padding:46px 20px 70px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:22px;
+  }
+  .card{
+    background:var(--panel-solid);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:26px 24px;
+    display:flex;
+    flex-direction:column;
+    text-decoration:none;
+    color:var(--text);
+    position:relative;
+    overflow:hidden;
+    transition:transform 0.15s ease, border-color 0.15s ease;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+    background:var(--card-accent, var(--emerald));
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    border-color:var(--card-accent, var(--emerald));
+  }
+  .card-icon{
+    font-size:2rem;
+    margin-bottom:14px;
+  }
+  .card-title{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:1.25rem;
+    margin-bottom:8px;
+  }
+  .card-desc{
+    color:var(--muted);
+    font-size:0.9rem;
+    line-height:1.55;
+    flex:1;
+  }
+  .card-cta{
+    margin-top:18px;
+    font-family:var(--mono);
+    font-size:0.78rem;
+    font-weight:700;
+    color:var(--card-accent, var(--emerald));
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  footer{
+    text-align:center;
+    padding:20px;
+    color:var(--muted);
+    font-size:0.78rem;
+    font-family:var(--mono);
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="anvil">⚒️</div>
+  <h1>L'<span>Établi</span></h1>
+</header>
+
+<main>
+  <div class="grid">
+
+    <a class="card" href="tunnels-nether.html" style="--card-accent:#d9793f;">
+      <div class="card-icon">🕳️</div>
+      <div class="card-title">Tunnels du Nether</div>
+      <div class="card-desc">Ajoute tes points de destination, choisis ton hub, et récupère la direction précise et la distance à creuser — étape par étape, sans zigzag.</div>
+      <div class="card-cta">Ouvrir l'outil →</div>
+    </a>
+
+    <a class="card" href="enchantements.html" style="--card-accent:#9c85d1;">
+      <div class="card-icon">📖</div>
+      <div class="card-title">Grimoire d'enchantements</div>
+      <div class="card-desc">Note ce que tu as déjà enchanté, suis les offres des villageois, et découvre ce qu'il te reste pour atteindre ton build idéal.</div>
+      <div class="card-cta">Ouvrir l'outil →</div>
+    </a>
+
+    <a class="card" href="bloc-notes.html" style="--card-accent:#6bab7a;">
+      <div class="card-icon">🪶</div>
+      <div class="card-title">Bloc-notes</div>
+      <div class="card-desc">Note tout ce que tu veux faire dans ton monde — projets, idées, rappels — et coche au fur et à mesure.</div>
+      <div class="card-cta">Ouvrir l'outil →</div>
+    </a>
+
+  </div>
+</main>
+
+<footer>établi personnel · outils Minecraft · Seed : 443175491261601422</footer>
+
+</body>
+</html>
