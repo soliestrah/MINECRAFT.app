@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -104,6 +104,7 @@
     cursor:pointer;
     background:none;
     border:none;
+    border-radius:0;
     color:var(--muted);
     padding:10px 2px;
     font-family:var(--sans);
@@ -132,6 +133,7 @@
     cursor:pointer;
     background:none;
     border:none;
+    border-radius:0;
     color:var(--muted);
     padding:8px 2px;
     font-family:var(--sans);
@@ -156,7 +158,7 @@
   .panel{
     background:var(--panel);
     border:1px solid var(--line);
-    border-radius:0 10px 10px 10px;
+    border-radius:10px;
     padding:20px;
   }
   .panel.plain{border-radius:10px;}
@@ -1835,6 +1837,13 @@
   }
 
   renderAll();
+
+  // Chargement automatique depuis le dépôt (fonctionne quand le site est hébergé, ex. GitHub Pages).
+  // En local (double-clic sur le fichier), ça échoue silencieusement et l'app démarre vide comme avant.
+  fetch('enchantements-config.json', {cache: 'no-store'})
+    .then(r => r.ok ? r.text() : Promise.reject())
+    .then(text => loadFromJSON(text))
+    .catch(() => {});
 </script>
 <footer>établi personnel · outils Minecraft · Seed : 443175491261601422</footer>
 </body>
