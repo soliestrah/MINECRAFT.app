@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>À faire — L'Établi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>">
+<style>
+  :root{
+    --bg: #171512;
+    --bg-soft: #1e1b17;
+    --panel: #24201b;
+    --panel-hover: #2c2721;
+    --border: #3b342c;
+    --text: #f4efe7;
+    --muted: #a79d90;
+    --green: #8fbf65;
+    --gold: #d4a85b;
+    --purple: #b68acb;
+    --blue: #73b7d6;
+    --red: #d87568;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "IBM Plex Mono", Consolas, "Liberation Mono", monospace;
+    --sidebar-w: 280px;
+    --radius: 10px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{background:var(--bg);}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--gold); color:#221c10;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  input, textarea{font-family:inherit;}
+  input:focus, button:focus, textarea:focus{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
+
+  /* ===================== LAYOUT ===================== */
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--bg-soft);
+    border-right:1px solid var(--border);
+    padding:24px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    position:sticky;
+    top:0;
+    align-self:flex-start;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-mark{
+    width:34px; height:34px;
+    background:var(--gold);
+    color:#241c0e;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem;
+    clip-path:polygon(0 15%, 15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%);
+    flex-shrink:0;
+  }
+  .brand-text h1{
+    font-size:1.05rem;
+    margin:0;
+    font-weight:800;
+    letter-spacing:0.2px;
+  }
+  .brand-text p{
+    margin:2px 0 0;
+    font-size:0.72rem;
+    color:var(--muted);
+  }
+
+  .progress-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+  }
+  .progress-card .pct{
+    font-family:var(--mono);
+    font-size:2.1rem;
+    font-weight:700;
+    color:var(--gold);
+    line-height:1;
+  }
+  .progress-card .pct-label{
+    font-size:0.72rem;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .progress-track{
+    height:8px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:6px;
+    overflow:hidden;
+    margin:12px 0 8px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--green);
+    transition:width 0.3s ease;
+  }
+  .progress-count{
+    font-size:0.75rem;
+    color:var(--muted);
+    font-family:var(--mono);
+  }
+
+  .nav-list{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    flex:1;
+    overflow-y:auto;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 10px;
+    border-radius:8px;
+    background:none;
+    border:none;
+    color:var(--muted);
+    text-align:left;
+    font-size:0.84rem;
+    font-weight:600;
+    width:100%;
+  }
+  .nav-item:hover{background:var(--panel-hover); color:var(--text);}
+  .nav-item.active{background:var(--panel); color:var(--text);}
+  .nav-item .icon{font-size:1rem; flex-shrink:0; width:20px; text-align:center;}
+  .nav-item .label{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .nav-item .mini-pct{
+    font-family:var(--mono);
+    font-size:0.68rem;
+    color:var(--muted);
+    flex-shrink:0;
+  }
+  .nav-item.active .mini-pct{color:var(--gold);}
+  .nav-item.done-100 .mini-pct{color:var(--green);}
+
+  .sidebar-actions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .side-btn{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:0.8rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .side-btn:hover{background:var(--panel-hover); border-color:var(--gold);}
+  .side-btn.danger:hover{border-color:var(--red); color:var(--red);}
+
+  /* ---- Mobile top bar ---- */
+  .mobile-bar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    background:var(--bg-soft);
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  .mobile-bar .brand{gap:8px;}
+  .mobile-bar .brand-mark{width:28px; height:28px; font-size:0.95rem;}
+  .mobile-bar .brand-text h1{font-size:0.92rem;}
+  .menu-btn{
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    width:38px; height:38px;
+    border-radius:8px;
+    font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sidebar-backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:29;
+  }
+
+  @media (max-width: 900px){
+    .mobile-bar{display:flex;}
+    .sidebar{
+      position:fixed;
+      top:0; left:0;
+      height:100vh;
+      z-index:30;
+      transform:translateX(-105%);
+      transition:transform 0.25s ease;
+      box-shadow:8px 0 24px rgba(0,0,0,0.4);
+    }
+    .sidebar.open{transform:translateX(0);}
+    .sidebar-backdrop.open{display:block;}
+  }
+
+  /* ---- Main content ---- */
+  .main{
+    flex:1;
+    min-width:0;
+    padding:32px 36px 80px;
+  }
+  @media (max-width: 900px){
+    .main{padding:20px 16px 70px;}
+  }
+  .main-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+  .main-header h2{
+    font-size:1.7rem;
+    margin:0 0 6px;
+    font-weight:800;
+    letter-spacing:0.2px;
+  }
+  .main-header p{
+    margin:0;
+    color:var(--muted);
+    font-size:0.9rem;
+    max-width:520px;
+  }
+
+  .search-wrap{
+    position:relative;
+    max-width:340px;
+    width:100%;
+  }
+  .search-wrap input{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 14px 10px 34px;
+    border-radius:8px;
+    font-size:0.85rem;
+  }
+  .search-wrap input::placeholder{color:var(--muted);}
+  .search-wrap .icon{
+    position:absolute;
+    left:11px; top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    font-size:0.85rem;
+    pointer-events:none;
+  }
+  .search-clear{
+    position:absolute;
+    right:8px; top:50%;
+    transform:translateY(-50%);
+    background:none; border:none;
+    color:var(--muted);
+    font-size:0.9rem;
+    padding:4px;
+    display:none;
+  }
+  .search-clear.show{display:block;}
+  .search-clear:hover{color:var(--red);}
+
+  .no-results{
+    color:var(--muted);
+    font-size:0.88rem;
+    padding:30px 10px;
+    text-align:center;
+    border:1px dashed var(--border);
+    border-radius:var(--radius);
+    display:none;
+  }
+  .no-results.show{display:block;}
+
+  /* ---- Phase sections ---- */
+  .phase{
+    margin-bottom:22px;
+    background:var(--bg-soft);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    scroll-margin-top:20px;
+  }
+  .phase-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px;
+    cursor:pointer;
+    background:var(--panel);
+  }
+  .phase-head:hover{background:var(--panel-hover);}
+  .phase-icon{
+    font-size:1.25rem;
+    width:34px; height:34px;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg);
+    border:1px solid var(--border);
+    clip-path:polygon(0 15%, 15% 0, 85% 0, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0 85%);
+  }
+  .phase-title-wrap{flex:1; min-width:0;}
+  .phase-title{
+    font-size:1.02rem;
+    font-weight:700;
+    margin:0 0 6px;
+  }
+  .phase-progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .phase-progress-track{
+    flex:1;
+    height:6px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    overflow:hidden;
+  }
+  .phase-progress-fill{
+    height:100%;
+    background:var(--green);
+    transition:width 0.3s ease;
+  }
+  .phase-progress-fill.zero{background:var(--border);}
+  .phase-count{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    color:var(--muted);
+    flex-shrink:0;
+  }
+  .phase-chevron{
+    font-size:0.8rem;
+    color:var(--muted);
+    transition:transform 0.2s ease;
+    flex-shrink:0;
+  }
+  .phase.collapsed .phase-chevron{transform:rotate(-90deg);}
+  .phase-body{
+    padding:6px 18px 18px;
+  }
+  .phase.collapsed .phase-body{display:none;}
+
+  .group{margin-top:16px;}
+  .group:first-child{margin-top:10px;}
+  .group-title{
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--gold);
+    font-weight:700;
+    margin:0 0 8px;
+  }
+  .task-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .task{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:7px 8px;
+    border-radius:7px;
+    font-size:0.87rem;
+    line-height:1.4;
+  }
+  .task:hover{background:var(--panel);}
+  .task.hidden{display:none;}
+  .task input[type="checkbox"]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:18px; height:18px;
+    border:1.5px solid var(--border);
+    border-radius:5px;
+    background:var(--bg);
+    flex-shrink:0;
+    margin-top:1px;
+    cursor:pointer;
+    position:relative;
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .task input[type="checkbox"]:checked{
+    background:var(--green);
+    border-color:var(--green);
+  }
+  .task input[type="checkbox"]:checked::after{
+    content:"";
+    position:absolute;
+    left:5px; top:1px;
+    width:5px; height:9px;
+    border:solid #16210f;
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  .task label{
+    cursor:pointer;
+    flex:1;
+  }
+  .task.done label{
+    color:var(--muted);
+    text-decoration:line-through;
+    text-decoration-color:var(--border);
+  }
+  .task mark{
+    background:rgba(212,168,91,0.28);
+    color:var(--text);
+    border-radius:3px;
+    padding:0 1px;
+  }
+
+  /* ---- Roadmap phase gets a subtle accent ---- */
+  .phase[data-phase="roadmap"] .phase-icon{background:rgba(182,138,203,0.15); border-color:var(--purple);}
+  .phase[data-phase="roadmap"] .group-title{color:var(--purple);}
+
+  /* ---- Toasts ---- */
+  .toast-wrap{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:60;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  @media (max-width:900px){
+    .toast-wrap{left:16px; right:16px; bottom:16px;}
+  }
+  .toast{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-left:3px solid var(--green);
+    color:var(--text);
+    padding:11px 16px;
+    border-radius:8px;
+    font-size:0.83rem;
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    animation:toast-in 0.2s ease;
+  }
+  .toast.error{border-left-color:var(--red);}
+  @keyframes toast-in{
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ---- File input (hidden) ---- */
+  #import-input{display:none;}
+
+  footer{
+    text-align:center;
+    padding:24px 20px 10px;
+    color:var(--muted);
+    font-size:0.74rem;
+    font-family:var(--mono);
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-bar">
+  <div class="brand">
+    <div class="brand-mark">🪵</div>
+    <div class="brand-text"><h1>L'Établi</h1></div>
+  </div>
+  <button class="menu-btn" id="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+</div>
+
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🪵</div>
+      <div class="brand-text">
+        <h1>L'Établi</h1>
+        <p>Roadmap de refonte</p>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="pct" id="global-pct">0%</div>
+      <div class="pct-label">Progression globale</div>
+      <div class="progress-track"><div class="progress-fill" id="global-fill" style="width:0%;"></div></div>
+      <div class="progress-count" id="global-count">0 / 0 tâches</div>
+    </div>
+
+    <nav class="nav-list" id="nav-list"></nav>
+
+    <div class="sidebar-actions">
+      <button class="side-btn" id="btn-export">⬇ Exporter JSON</button>
+      <button class="side-btn" id="btn-import">⬆ Importer JSON</button>
+      <button class="side-btn danger" id="btn-reset">↺ Réinitialiser</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <h2>À faire</h2>
+        <p>Toute la refonte de L'Établi, phase par phase. Coche au fur et à mesure — tout est sauvegardé automatiquement dans ce navigateur.</p>
+      </div>
+      <div class="search-wrap">
+        <span class="icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Rechercher une tâche...">
+        <button class="search-clear" id="search-clear" aria-label="Effacer la recherche">✕</button>
+      </div>
+    </div>
+
+    <div class="no-results" id="no-results">Aucune tâche ne correspond à ta recherche.</div>
+
+    <div id="phases-root"></div>
+
+    <footer>L'Établi · roadmap personnelle · sauvegardée en local</footer>
+  </main>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+<input type="file" id="import-input" accept="application/json">
+
+<script>
+  // ===================== DONNÉES =====================
+  // Structure : phases -> groupes -> tâches. Rien n'est résumé, chaque ligne
+  // de la spec d'origine correspond à une tâche indépendante avec sa checkbox.
+  const PHASES = [
+    {
+      id: 'fond', icon: '🔥', navLabel: 'Fondations', title: 'Fondations du projet',
+      groups: [
+        { title: 'Identité', tasks: [
+          "Définir définitivement le nom L'Établi",
+          "Ajouter une baseline : « Ton monde, organisé. »",
+          "Créer une vraie icône pour l'application",
+          "Créer le favicon",
+          "Créer les versions 180x180, 192x192 et 512x512",
+          "Ajouter l'icône Apple pour l'écran d'accueil iPhone",
+          "Créer ou mettre à jour le manifest.json",
+        ]},
+        { title: 'Design system', tasks: [
+          "Définir la palette principale",
+          "Définir les couleurs de fond",
+          "Définir les couleurs des textes",
+          "Définir les couleurs d'accent",
+          "Choisir une typographie principale",
+          "Définir les tailles de titres",
+          "Définir les tailles de texte",
+          "Créer un système d'espacement cohérent",
+          "Définir les border-radius",
+          "Définir les ombres",
+          "Créer les styles de boutons",
+          "Créer les styles d'inputs",
+          "Créer les styles de cartes",
+          "Créer les styles de badges",
+          "Créer les styles de progress bars",
+        ]},
+      ]
+    },
+    {
+      id: 'nav', icon: '🧭', navLabel: 'Navigation', title: 'Navigation globale',
+      groups: [
+        { title: 'Sidebar', tasks: [
+          "Créer une sidebar commune à toutes les pages",
+          "Ajouter le logo ou l'icône",
+          "Ajouter le nom L'Établi",
+          "Ajouter la seed du monde",
+          "Ajouter Tableau de bord",
+          "Ajouter Atlas",
+          "Ajouter Grimoire",
+          "Ajouter Carnet",
+          "Ajouter Inventaire",
+          "Ajouter Paramètres en bas",
+          "Ajouter un état actif clair",
+          "Ajouter des icônes cohérentes",
+          "Vérifier que la sidebar fonctionne sur mobile",
+        ]},
+        { title: 'Header', tasks: [
+          "Créer un header commun",
+          "Ajouter le titre de la page",
+          "Ajouter un sous-titre",
+          "Ajouter éventuellement le jour Minecraft",
+          "Ajouter les actions principales selon la page",
+        ]},
+      ]
+    },
+    {
+      id: 'dash', icon: '🏠', navLabel: 'Dashboard', title: "Refaire complètement la page d'accueil",
+      groups: [
+        { title: 'Nouveau rôle', tasks: [
+          "Transformer l'accueil en tableau de bord de ton monde Minecraft",
+        ]},
+        { title: 'Carte Exploration', tasks: [
+          "Afficher le nombre de destinations",
+          "Afficher la progression",
+          "Ajouter un mini aperçu de carte",
+          "Ajouter un bouton vers l'Atlas",
+        ]},
+        { title: 'Carte Équipement', tasks: [
+          "Afficher le nombre d'enchantements terminés",
+          "Afficher une progression",
+          "Afficher quelques équipements",
+          "Ajouter un bouton vers le Grimoire",
+        ]},
+        { title: 'Carte Projets', tasks: [
+          "Afficher les tâches en cours",
+          "Afficher les projets principaux",
+          "Ajouter un bouton vers le Carnet",
+        ]},
+        { title: 'Activité récente', tasks: [
+          "Ajouter un historique des dernières actions",
+          "Enregistrer les modifications importantes",
+          "Afficher les dernières activités",
+        ]},
+        { title: 'Rappels', tasks: [
+          "Ajouter une petite checklist rapide",
+          "Permettre de cocher directement depuis le dashboard",
+        ]},
+      ]
+    },
+    {
+      id: 'atlas', icon: '🗺️', navLabel: 'Atlas', title: 'Refonte de Tunnels du Nether → Atlas',
+      groups: [
+        { title: 'Renommage', tasks: [
+          "Renommer Tunnels du Nether en Atlas",
+          "Modifier les textes et titres",
+          "Créer une identité visuelle verte",
+        ]},
+        { title: 'Structure UX', tasks: [
+          "Créer Étape 1 : Destinations",
+          "Créer Étape 2 : Tunnel",
+          "Créer Étape 3 : Plan",
+          "Créer Étape 4 : Instructions",
+        ]},
+        { title: 'Destinations', tasks: [
+          "Améliorer l'ajout de destinations",
+          "Ajouter une couleur par destination",
+          "Ajouter une icône par type de lieu",
+          "Permettre de modifier une destination",
+          "Permettre de supprimer une destination",
+          "Ajouter les catégories Village",
+          "Ajouter les catégories Base",
+          "Ajouter les catégories Structure",
+          "Ajouter les catégories Portail",
+          "Ajouter les catégories Autre",
+        ]},
+        { title: 'Carte', tasks: [
+          "Agrandir la carte",
+          "Mettre la carte au centre de l'expérience",
+          "Améliorer le zoom",
+          "Ajouter une légende",
+          "Différencier X d'abord et Z d'abord",
+          "Améliorer la lisibilité des tunnels",
+          "Ajouter les distances directement sur la carte",
+          "Ajouter un bouton recentrer",
+        ]},
+        { title: 'Instructions', tasks: [
+          "Générer un plan clair étape par étape",
+          "Afficher les distances",
+          "Afficher la direction",
+          "Ajouter des cases à cocher pendant la construction",
+          "Ajouter un bouton copier",
+          "Ajouter un bouton imprimer éventuellement",
+        ]},
+        { title: 'Sauvegarde', tasks: [
+          "Garder Export JSON",
+          "Garder Import JSON",
+          "Cacher GitHub dans une section avancée",
+          "Simplifier la sauvegarde locale",
+        ]},
+      ]
+    },
+    {
+      id: 'grim', icon: '📖', navLabel: 'Grimoire', title: 'Refonte du Grimoire',
+      groups: [
+        { title: 'Nouvelle navigation interne', tasks: [
+          "Créer l'onglet Mes équipements",
+          "Créer l'onglet Villageois",
+          "Créer l'onglet Build idéal",
+          "Créer l'onglet Réserve",
+          "Créer l'onglet À chercher",
+        ]},
+        { title: 'Mes équipements', tasks: [
+          "Créer une liste visuelle des équipements",
+          "Ajouter une icône par équipement",
+          "Ajouter une barre de progression",
+          "Afficher le nombre d'enchantements",
+          "Ajouter un équipement facilement",
+          "Modifier un équipement facilement",
+          "Supprimer un équipement",
+        ]},
+        { title: "Détail d'un équipement", tasks: [
+          "Afficher les enchantements actifs",
+          "Afficher les enchantements manquants",
+          "Afficher les incompatibilités",
+          "Ajouter des badges pour chaque enchantement",
+          "Afficher la progression globale",
+        ]},
+        { title: 'Villageois', tasks: [
+          "Créer une liste claire des bibliothécaires",
+          "Afficher l'enchantement proposé",
+          "Afficher le prix",
+          "Marquer un enchantement comme obtenu",
+          "Filtrer les enchantements",
+          "Voir rapidement les enchantements manquants",
+        ]},
+        { title: 'Build idéal', tasks: [
+          "Créer une vue par équipement",
+          "Afficher les enchantements obtenus",
+          "Afficher les enchantements manquants",
+          "Afficher les enchantements incompatibles",
+          "Ajouter une progression",
+          "Ajouter un pourcentage global",
+        ]},
+        { title: 'Réserve', tasks: [
+          "Gérer les livres déjà obtenus",
+          "Ajouter les quantités",
+          "Utiliser automatiquement la réserve dans les calculs",
+          "Indiquer quels livres peuvent être utilisés",
+        ]},
+        { title: 'À chercher', tasks: [
+          "Générer automatiquement la liste",
+          "Trier par priorité",
+          "Indiquer pour quel équipement l'enchantement est nécessaire",
+          "Indiquer si un villageois le possède déjà",
+        ]},
+      ]
+    },
+    {
+      id: 'carnet', icon: '📓', navLabel: 'Carnet', title: 'Refonte du Bloc-notes → Carnet',
+      groups: [
+        { title: 'Interface', tasks: [
+          "Renommer officiellement Bloc-notes en Carnet",
+          "Ajouter une recherche",
+          "Ajouter un filtre par catégorie",
+          "Ajouter un filtre par statut",
+        ]},
+        { title: 'Statuts', tasks: [
+          "Créer le statut À faire",
+          "Créer le statut En cours",
+          "Créer le statut Terminé",
+        ]},
+        { title: 'Catégories', tasks: [
+          "Créer la catégorie Builds",
+          "Créer la catégorie Fermes",
+          "Créer la catégorie Exploration",
+          "Créer la catégorie Redstone",
+          "Créer la catégorie Décoration",
+          "Créer la catégorie Autre",
+        ]},
+        { title: 'Nouvelle organisation', tasks: [
+          "Créer une vue type Kanban",
+          "Créer la colonne À faire",
+          "Créer la colonne En cours",
+          "Créer la colonne Terminé",
+        ]},
+        { title: 'Fonctionnalités supplémentaires', tasks: [
+          "Ajouter une date",
+          "Ajouter une priorité",
+          "Ajouter des sous-tâches",
+          "Ajouter une catégorie",
+          "Ajouter des notes",
+          "Ajouter une progression",
+          "Ajouter une recherche",
+        ]},
+      ]
+    },
+    {
+      id: 'inv', icon: '📦', navLabel: 'Inventaire', title: "Créer l'Inventaire",
+      groups: [
+        { title: 'Ressources', tasks: [
+          "Créer une liste de ressources",
+          "Ajouter les quantités nécessaires",
+          "Ajouter les quantités possédées",
+          "Calculer automatiquement ce qu'il manque",
+        ]},
+        { title: 'Projet', tasks: [
+          "Associer un projet à des ressources nécessaires",
+          "Afficher la progression des ressources",
+          "Créer des checklists de construction",
+        ]},
+      ]
+    },
+    {
+      id: 'connect', icon: '🔗', navLabel: 'Connexions', title: 'Connecter tous les outils',
+      groups: [
+        { title: 'Atlas ↔ Carnet', tasks: [
+          "Associer une destination à un projet",
+          "Créer la logique pour un projet comme « Construire tunnel vers le village »",
+        ]},
+        { title: 'Carnet ↔ Inventaire', tasks: [
+          "Associer des ressources à un projet",
+          "Calculer automatiquement les ressources manquantes",
+        ]},
+        { title: 'Grimoire ↔ Dashboard', tasks: [
+          "Afficher les enchantements manquants sur l'accueil",
+        ]},
+        { title: 'Carnet ↔ Dashboard', tasks: [
+          "Afficher les projets en cours",
+        ]},
+        { title: 'Atlas ↔ Dashboard', tasks: [
+          "Afficher les destinations principales",
+        ]},
+        { title: 'Données globales', tasks: [
+          "Créer une logique de données commune entre toutes les pages",
+          "Réfléchir à une structure JSON globale pour L'Établi",
+        ]},
+      ]
+    },
+    {
+      id: 'ux', icon: '✨', navLabel: 'Micro UX', title: 'Micro UX',
+      groups: [
+        { title: 'États vides — Atlas', tasks: [
+          "Créer un empty state Atlas",
+          "Ajouter une illustration",
+          "Ajouter un texte motivant",
+          "Ajouter un bouton Ajouter une destination",
+        ]},
+        { title: 'États vides — Grimoire', tasks: [
+          "Créer un empty state Grimoire",
+          "Ajouter une illustration",
+          "Ajouter un texte explicatif",
+          "Ajouter un bouton Ajouter un équipement",
+        ]},
+        { title: 'États vides — Carnet', tasks: [
+          "Créer un empty state Carnet",
+          "Ajouter une illustration",
+          "Ajouter un texte motivant",
+          "Ajouter un bouton Nouvelle tâche",
+        ]},
+        { title: 'Feedback utilisateur', tasks: [
+          "Ajouter un toast quand une action est réussie",
+          "Ajouter une animation quand une tâche est terminée",
+          "Ajouter une confirmation avant suppression",
+          "Ajouter un message après sauvegarde",
+          "Ajouter un message après import",
+          "Ajouter un indicateur de chargement",
+        ]},
+      ]
+    },
+    {
+      id: 'mobile', icon: '📱', navLabel: 'Mobile', title: 'Mobile',
+      groups: [
+        { title: null, tasks: [
+          "Tester toutes les pages sur iPhone",
+          "Transformer la sidebar en menu mobile",
+          "Vérifier les boutons tactiles",
+          "Vérifier la taille des textes",
+          "Vérifier les inputs",
+          "Vérifier les tableaux",
+          "Vérifier la carte Atlas",
+          "Éviter le scroll horizontal",
+          "Vérifier l'écran d'accueil iPhone",
+          "Tester le mode standalone",
+        ]},
+      ]
+    },
+    {
+      id: 'perf', icon: '⚡', navLabel: 'Performance', title: 'Performance',
+      groups: [
+        { title: null, tasks: [
+          "Optimiser les images",
+          "Supprimer le CSS inutilisé",
+          "Regrouper les fichiers CSS",
+          "Optimiser le JavaScript",
+          "Vérifier les erreurs console",
+          "Vérifier les liens cassés",
+          "Tester les performances mobile",
+        ]},
+      ]
+    },
+    {
+      id: 'a11y', icon: '♿', navLabel: 'Accessibilité', title: 'Accessibilité',
+      groups: [
+        { title: null, tasks: [
+          "Ajouter des labels aux inputs",
+          "Ajouter des textes alternatifs aux images",
+          "Vérifier le contraste",
+          "Vérifier la navigation clavier",
+          "Ne pas utiliser uniquement la couleur pour transmettre une information",
+          "Ajouter des états focus visibles",
+        ]},
+      ]
+    },
+    {
+      id: 'code', icon: '🧹', navLabel: 'Code', title: 'Nettoyage du code',
+      groups: [
+        { title: null, tasks: [
+          "Créer un fichier CSS global",
+          "Créer des variables CSS",
+          "Supprimer les styles dupliqués",
+          "Créer des composants réutilisables",
+          "Uniformiser les noms de classes",
+          "Organiser les fichiers JavaScript",
+          "Ajouter des commentaires aux parties complexes",
+          "Séparer logique et affichage quand possible",
+        ]},
+      ]
+    },
+    {
+      id: 'roadmap', icon: '🚀', navLabel: 'Roadmap', title: 'Roadmap prioritaire — Ordre recommandé',
+      groups: [
+        { title: 'Sprint 1 — Fondations', tasks: [
+          "Créer la nouvelle icône",
+          "Créer le design system",
+          "Créer la sidebar",
+          "Uniformiser toutes les pages",
+        ]},
+        { title: 'Sprint 2 — Dashboard', tasks: [
+          "Refaire entièrement la page d'accueil",
+          "Ajouter Exploration",
+          "Ajouter Équipement",
+          "Ajouter Projets",
+          "Ajouter activité récente",
+        ]},
+        { title: 'Sprint 3 — Atlas', tasks: [
+          "Renommer Tunnels du Nether",
+          "Refaire la hiérarchie",
+          "Améliorer la carte",
+          "Créer les étapes",
+        ]},
+        { title: 'Sprint 4 — Grimoire', tasks: [
+          "Ajouter les onglets",
+          "Simplifier les données",
+          "Ajouter les progressions",
+          "Améliorer les villageois",
+        ]},
+        { title: 'Sprint 5 — Carnet', tasks: [
+          "Ajouter catégories",
+          "Ajouter statuts",
+          "Créer la vue Kanban",
+          "Ajouter statistiques",
+        ]},
+        { title: 'Sprint 6 — Finition', tasks: [
+          "Créer les états vides",
+          "Ajouter les animations",
+          "Ajouter les toasts",
+          "Optimiser le responsive mobile",
+          "Améliorer l'accessibilité",
+          "Nettoyer le code",
+        ]},
+      ]
+    },
+  ];
+
+  // Attribution des identifiants uniques (phaseId-tN)
+  PHASES.forEach(phase => {
+    let n = 0;
+    phase.groups.forEach(group => {
+      group.tasks = group.tasks.map(text => {
+        n++;
+        return { id: phase.id + '-t' + n, text };
+      });
+    });
+  });
+
+  // ===================== ÉTAT =====================
+  const STORAGE_KEY = 'etabli-roadmap-progress';
+  let state = {}; // { taskId: true }
+
+  function loadState(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      state = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      state = {};
+    }
+  }
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function allTasks(){
+    const list = [];
+    PHASES.forEach(phase => phase.groups.forEach(group => group.tasks.forEach(t => list.push(t))));
+    return list;
+  }
+
+  function phaseStats(phase){
+    const tasks = phase.groups.flatMap(g => g.tasks);
+    const done = tasks.filter(t => state[t.id]).length;
+    return { done, total: tasks.length };
+  }
+
+  function globalStats(){
+    const tasks = allTasks();
+    const done = tasks.filter(t => state[t.id]).length;
+    return { done, total: tasks.length };
+  }
+
+  // ===================== RENDU =====================
+  const navList = document.getElementById('nav-list');
+  const phasesRoot = document.getElementById('phases-root');
+  const collapsedPhases = new Set();
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function highlight(text, query){
+    if (!query) return escapeHtml(text);
+    const escaped = escapeHtml(text);
+    const q = query.trim();
+    if (!q) return escaped;
+    const idx = escaped.toLowerCase().indexOf(q.toLowerCase());
+    if (idx === -1) return escaped;
+    return escaped.slice(0, idx) + '<mark>' + escaped.slice(idx, idx + q.length) + '</mark>' + escaped.slice(idx + q.length);
+  }
+
+  function renderNav(){
+    const { done, total } = globalStats();
+    document.getElementById('global-pct').textContent = (total ? Math.round(done / total * 100) : 0) + '%';
+    document.getElementById('global-fill').style.width = (total ? (done / total * 100) : 0) + '%';
+    document.getElementById('global-count').textContent = done + ' / ' + total + ' tâches';
+
+    navList.innerHTML = '';
+    PHASES.forEach(phase => {
+      const { done: pd, total: pt } = phaseStats(phase);
+      const pct = pt ? Math.round(pd / pt * 100) : 0;
+      const btn = document.createElement('button');
+      btn.className = 'nav-item' + (pct === 100 && pt > 0 ? ' done-100' : '');
+      btn.dataset.phase = phase.id;
+      btn.innerHTML = `
+        <span class="icon">${phase.icon}</span>
+        <span class="label">${escapeHtml(phase.navLabel)}</span>
+        <span class="mini-pct">${pct}%</span>
+      `;
+      btn.addEventListener('click', () => {
+        const target = document.querySelector(`.phase[data-phase="${phase.id}"]`);
+        if (target){
+          collapsedPhases.delete(phase.id);
+          renderPhases(document.getElementById('search-input').value);
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        closeMobileSidebar();
+      });
+      navList.appendChild(btn);
+    });
+  }
+
+  function renderPhases(query){
+    query = (query || '').trim();
+    phasesRoot.innerHTML = '';
+    let anyVisible = false;
+
+    PHASES.forEach(phase => {
+      const { done, total } = phaseStats(phase);
+      const pct = total ? Math.round(done / total * 100) : 0;
+      const collapsed = collapsedPhases.has(phase.id);
+
+      const section = document.createElement('section');
+      section.className = 'phase' + (collapsed ? ' collapsed' : '');
+      section.dataset.phase = phase.id;
+
+      let groupsHtml = '';
+      let phaseHasMatch = !query; // sans recherche, on affiche tout
+
+      phase.groups.forEach(group => {
+        let tasksHtml = '';
+        let groupHasMatch = false;
+
+        group.tasks.forEach(task => {
+          const matches = !query || task.text.toLowerCase().includes(query.toLowerCase());
+          if (matches) groupHasMatch = true;
+          const checked = !!state[task.id];
+          tasksHtml += `
+            <li class="task${checked ? ' done' : ''}${matches ? '' : ' hidden'}">
+              <input type="checkbox" id="${task.id}" data-task="${task.id}" ${checked ? 'checked' : ''}>
+              <label for="${task.id}">${highlight(task.text, query)}</label>
+            </li>
+          `;
+        });
+
+        if (groupHasMatch) phaseHasMatch = true;
+
+        groupsHtml += `
+          <div class="group"${query && !groupHasMatch ? ' style="display:none;"' : ''}>
+            ${group.title ? `<h4 class="group-title">${escapeHtml(group.title)}</h4>` : ''}
+            <ul class="task-list">${tasksHtml}</ul>
+          </div>
+        `;
+      });
+
+      if (phaseHasMatch) anyVisible = true;
+      section.style.display = phaseHasMatch ? '' : 'none';
+
+      section.innerHTML = `
+        <div class="phase-head" data-toggle="${phase.id}">
+          <div class="phase-icon">${phase.icon}</div>
+          <div class="phase-title-wrap">
+            <h3 class="phase-title">${escapeHtml(phase.title)}</h3>
+            <div class="phase-progress-row">
+              <div class="phase-progress-track"><div class="phase-progress-fill${pct === 0 ? ' zero' : ''}" style="width:${pct}%;"></div></div>
+              <span class="phase-count">${done}/${total}</span>
+            </div>
+          </div>
+          <span class="phase-chevron">▾</span>
+        </div>
+        <div class="phase-body">${groupsHtml}</div>
+      `;
+
+      phasesRoot.appendChild(section);
+    });
+
+    document.getElementById('no-results').classList.toggle('show', query && !anyVisible);
+
+    // (ré)attache les écouteurs après reconstruction du DOM
+    phasesRoot.querySelectorAll('[data-toggle]').forEach(head => {
+      head.addEventListener('click', () => {
+        const id = head.dataset.toggle;
+        if (collapsedPhases.has(id)) collapsedPhases.delete(id);
+        else collapsedPhases.add(id);
+        renderPhases(document.getElementById('search-input').value);
+      });
+    });
+    phasesRoot.querySelectorAll('input[type="checkbox"][data-task]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) state[cb.dataset.task] = true;
+        else delete state[cb.dataset.task];
+        saveState();
+        renderNav();
+        // met à jour juste la ligne + la barre de la phase, sans tout redessiner
+        const li = cb.closest('.task');
+        li.classList.toggle('done', cb.checked);
+        const phaseEl = cb.closest('.phase');
+        const phaseId = phaseEl.dataset.phase;
+        const phase = PHASES.find(p => p.id === phaseId);
+        const { done, total } = phaseStats(phase);
+        const pct = total ? Math.round(done / total * 100) : 0;
+        phaseEl.querySelector('.phase-progress-fill').style.width = pct + '%';
+        phaseEl.querySelector('.phase-progress-fill').classList.toggle('zero', pct === 0);
+        phaseEl.querySelector('.phase-count').textContent = done + '/' + total;
+      });
+    });
+  }
+
+  function renderAll(){
+    renderNav();
+    renderPhases(document.getElementById('search-input').value);
+  }
+
+  // ===================== RECHERCHE =====================
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+  searchInput.addEventListener('input', () => {
+    searchClear.classList.toggle('show', searchInput.value.length > 0);
+    renderPhases(searchInput.value);
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.classList.remove('show');
+    renderPhases('');
+    searchInput.focus();
+  });
+
+  // ===================== MENU MOBILE =====================
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  function openMobileSidebar(){
+    sidebar.classList.add('open');
+    backdrop.classList.add('open');
+  }
+  function closeMobileSidebar(){
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('open');
+  }
+  document.getElementById('menu-toggle').addEventListener('click', openMobileSidebar);
+  backdrop.addEventListener('click', closeMobileSidebar);
+
+  // ===================== TOASTS =====================
+  function showToast(msg, type){
+    const wrap = document.getElementById('toast-wrap');
+    const el = document.createElement('div');
+    el.className = 'toast' + (type === 'error' ? ' error' : '');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  // ===================== EXPORT / IMPORT / RESET =====================
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const payload = {
+      app: "L'Établi",
+      exportDate: new Date().toISOString(),
+      version: "1.0",
+      tasks: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'etabli-roadmap-progress.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('Progression exportée ✓');
+  });
+
+  const importInput = document.getElementById('import-input');
+  document.getElementById('btn-import').addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        const tasks = data && data.tasks && typeof data.tasks === 'object' ? data.tasks : null;
+        if (!tasks) throw new Error('format invalide');
+        state = {};
+        Object.keys(tasks).forEach(id => { if (tasks[id]) state[id] = true; });
+        saveState();
+        renderAll();
+        showToast('Progression importée ✓');
+      } catch (err){
+        showToast('Fichier invalide.', 'error');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    const ok = window.confirm('Réinitialiser toute la progression ? Cette action décoche toutes les tâches et est irréversible.');
+    if (!ok) return;
+    state = {};
+    saveState();
+    renderAll();
+    showToast('Progression réinitialisée.');
+  });
+
+  // ===================== INIT =====================
+  loadState();
+  renderAll();
+</script>
+</body>
+</html>
