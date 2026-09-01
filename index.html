@@ -30,15 +30,12 @@
     color:var(--text);
     font-family:var(--sans);
     min-height:100vh;
+    overflow-x:hidden;
   }
   header{
     padding:56px 24px 30px;
     text-align:center;
     border-bottom:1px solid var(--line);
-  }
-  .anvil{
-    font-size:2.2rem;
-    margin-bottom:10px;
   }
   header h1{
     font-family:var(--serif);
@@ -89,10 +86,6 @@
     transform:translateY(-3px);
     border-color:var(--card-accent, var(--emerald));
   }
-  .card-icon{
-    font-size:2rem;
-    margin-bottom:14px;
-  }
   .card-title{
     font-family:var(--serif);
     font-weight:700;
@@ -128,7 +121,6 @@
 <body>
 
 <header>
-  <div class="anvil">⚒️</div>
   <h1>L'<span>Établi</span></h1>
 </header>
 
@@ -136,21 +128,18 @@
   <div class="grid">
 
     <a class="card" href="tunnels-nether.html" style="--card-accent:#d9793f;">
-      <div class="card-icon">🕳️</div>
       <div class="card-title">Tunnels du Nether</div>
       <div class="card-desc">Ajoute tes points de destination, choisis ton hub, et récupère la direction précise et la distance à creuser — étape par étape, sans zigzag.</div>
       <div class="card-cta">Ouvrir l'outil →</div>
     </a>
 
     <a class="card" href="enchantements.html" style="--card-accent:#9c85d1;">
-      <div class="card-icon">📖</div>
       <div class="card-title">Grimoire d'enchantements</div>
       <div class="card-desc">Note ce que tu as déjà enchanté, suis les offres des villageois, et découvre ce qu'il te reste pour atteindre ton build idéal.</div>
       <div class="card-cta">Ouvrir l'outil →</div>
     </a>
 
     <a class="card" href="bloc-notes.html" style="--card-accent:#6bab7a;">
-      <div class="card-icon">🪶</div>
       <div class="card-title">Bloc-notes</div>
       <div class="card-desc">Note tout ce que tu veux faire dans ton monde — projets, idées, rappels — et coche au fur et à mesure.</div>
       <div class="card-cta">Ouvrir l'outil →</div>
