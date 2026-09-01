@@ -29,6 +29,7 @@
     color:var(--text);
     font-family:var(--sans);
     min-height:100vh;
+    overflow-x:hidden;
   }
   header{
     padding:36px 24px 18px;
@@ -38,6 +39,8 @@
   nav.toolbar{
     display:flex;
     justify-content:center;
+    flex-wrap:wrap;
+    row-gap:6px;
     gap:18px;
     padding:12px 20px;
     background:var(--panel-2);
@@ -432,9 +435,9 @@
 <body>
 
 <nav class="toolbar">
-  <a href="index.html" class="home">🛠️ Établi</a>
-  <a href="enchantements.html">📖 Enchantements</a>
-  <a href="bloc-notes.html">🪶 Bloc-notes</a>
+  <a href="index.html" class="home">Établi</a>
+  <a href="enchantements.html">Enchantements</a>
+  <a href="bloc-notes.html">Bloc-notes</a>
 </nav>
 
 <header>
@@ -523,7 +526,7 @@
     <div class="copy-msg" id="save-msg"></div>
 
     <details class="gh-sync">
-      <summary>☁️ Sauvegarde en ligne (GitHub)</summary>
+      <summary>Sauvegarde en ligne (GitHub)</summary>
       <div class="row2">
         <div>
           <label for="gh-owner">Utilisateur / organisation</label>
@@ -801,7 +804,7 @@
 
     const remainingRows = rows.filter(r => !r.point.built);
     if (rows.length > 0 && remainingRows.length === 0){
-      routesList.innerHTML = '<div class="empty-note">Tout est creusé 🎉</div>';
+      routesList.innerHTML = '<div class="empty-note">Tout est creusé</div>';
     }
     remainingRows.forEach(r => {
       const card = document.createElement('div');
