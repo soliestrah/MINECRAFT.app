@@ -31,6 +31,7 @@
     color:var(--text);
     font-family:var(--sans);
     min-height:100vh;
+    overflow-x:hidden;
     transition:background 0.2s ease;
   }
   header{
@@ -41,6 +42,8 @@
   nav.toolbar{
     display:flex;
     justify-content:center;
+    flex-wrap:wrap;
+    row-gap:6px;
     gap:18px;
     padding:12px 20px;
     background:var(--panel-2);
@@ -93,9 +96,10 @@
   }
   .tabs{
     max-width:1180px;
-    margin:22px auto 0;
+    margin:22px auto 18px;
     padding:0 20px;
     display:flex;
+    justify-content:center;
     gap:22px;
     flex-wrap:wrap;
     border-bottom:1px solid var(--line);
@@ -124,6 +128,7 @@
   .view.active{display:block;}
   .subtabs{
     display:flex;
+    justify-content:center;
     gap:16px;
     flex-wrap:wrap;
     margin-bottom:18px;
@@ -154,6 +159,12 @@
   }
   @media (max-width: 860px){
     .grid2{grid-template-columns:1fr;}
+  }
+  @media (max-width: 480px){
+    .tabs{ gap:8px; padding:0 12px; }
+    .tab-btn{ font-size:0.68rem; padding:8px 0; }
+    .subtabs{ gap:10px; }
+    .subtab-btn{ font-size:0.68rem; }
   }
   .panel{
     background:var(--panel);
@@ -505,9 +516,9 @@
 <body>
 
 <nav class="toolbar">
-  <a href="index.html" class="home">🛠️ Établi</a>
-  <a href="tunnels-nether.html">🕳️ Tunnels</a>
-  <a href="bloc-notes.html">🪶 Bloc-notes</a>
+  <a href="index.html" class="home">Établi</a>
+  <a href="tunnels-nether.html">Tunnels</a>
+  <a href="bloc-notes.html">Bloc-notes</a>
 </nav>
 
 <header>
@@ -569,7 +580,7 @@
       <div class="copy-msg" id="save-msg"></div>
 
       <details class="gh-sync">
-        <summary>☁️ Sauvegarde en ligne (GitHub)</summary>
+        <summary>Sauvegarde en ligne (GitHub)</summary>
         <div class="row2">
           <div>
             <label for="gh-owner">Utilisateur / organisation</label>
@@ -607,8 +618,8 @@
 
           <label for="o-kind">Type d'offre</label>
           <select id="o-kind">
-            <option value="book">📖 Livre enchanté</option>
-            <option value="item">🛡️ Objet déjà enchanté (armurier, etc.)</option>
+            <option value="book">Livre enchanté</option>
+            <option value="item">Objet déjà enchanté (armurier, etc.)</option>
           </select>
 
           <div id="o-book-fields">
@@ -669,8 +680,8 @@
             <label for="offer-filter-kind">Filtrer par type</label>
             <select id="offer-filter-kind">
               <option value="">— Tout —</option>
-              <option value="book">📖 Livres</option>
-              <option value="item">🛡️ Objets complets</option>
+              <option value="book">Livres</option>
+              <option value="item">Objets complets</option>
             </select>
           </div>
         </div>
@@ -700,11 +711,11 @@
   <section class="view" id="view-ideal">
 
     <div class="subtabs" id="ideal-subtabs">
-      <button class="subtab-btn active" data-subtab="build">🎯 Build idéal</button>
-      <button class="subtab-btn" data-subtab="reserve">📚 Réserve</button>
-      <button class="subtab-btn" data-subtab="prefs">⚙️ Préférences</button>
-      <button class="subtab-btn" data-subtab="search">🔎 À chercher</button>
-      <button class="subtab-btn" data-subtab="market">🛒 Chez les villageois</button>
+      <button class="subtab-btn active" data-subtab="build">Build idéal</button>
+      <button class="subtab-btn" data-subtab="reserve">Réserve</button>
+      <button class="subtab-btn" data-subtab="prefs">Préférences</button>
+      <button class="subtab-btn" data-subtab="search">À chercher</button>
+      <button class="subtab-btn" data-subtab="market">Chez les villageois</button>
     </div>
 
     <div class="subview active" id="subview-build">
@@ -742,7 +753,7 @@
 
     <div class="subview" id="subview-search">
       <div class="panel plain">
-        <h2>🔎 Livres à chercher chez un nouveau bibliothécaire</h2>
+        <h2>Livres à chercher chez un nouveau bibliothécaire</h2>
         <div class="card-list" id="needed-books-list"></div>
         <div class="empty-note" id="needed-books-empty">
           Rien à chercher pour l'instant (ou ajoute d'abord des objets dans l'onglet Mes équipements).
@@ -752,7 +763,7 @@
 
     <div class="subview" id="subview-market">
       <div class="panel plain">
-        <h2>🛒 Actuellement chez des villageois</h2>
+        <h2>Actuellement chez des villageois</h2>
         <div class="card-list" id="missing-books-list"></div>
         <div class="empty-note" id="missing-books-empty">
           Aucune offre notée pour l'instant qui corresponde à ton build idéal.
@@ -1347,7 +1358,7 @@
     books.slice().sort((a,b) => ENCH[a.enchId].name.localeCompare(ENCH[b.enchId].name,'en')).forEach(book => {
       const chip = document.createElement('div');
       chip.className = 'book-chip';
-      chip.innerHTML = `📖 ${escapeHtml(ENCH[book.enchId].name)} ${roman(book.level)} <button type="button" data-del-book="${book.id}" title="Retirer de la réserve">✕</button>`;
+      chip.innerHTML = `${escapeHtml(ENCH[book.enchId].name)} ${roman(book.level)} <button type="button" data-del-book="${book.id}" title="Retirer de la réserve">✕</button>`;
       wrap.appendChild(chip);
     });
     wrap.querySelectorAll('[data-del-book]').forEach(b => b.addEventListener('click', () => deleteBook(Number(b.dataset.delBook))));
@@ -1412,7 +1423,7 @@
     }
     const ideal = computeIdeal(item.type, item.prefOverrides).map(x => x.id);
     if (ideal.includes(offer.enchId)){
-      badges.push({cls:'badge-ideal', text: '🎯 Fait partie du build idéal'});
+      badges.push({cls:'badge-ideal', text: 'Fait partie du build idéal'});
     }
     return badges;
   }
@@ -1512,13 +1523,13 @@
           </div>
         </div>`;
         if (offer.note){
-          html += `<div class="card-sub" style="margin-top:6px;">📝 ${escapeHtml(offer.note)}</div>`;
+          html += `<div class="card-sub" style="margin-top:6px;">${escapeHtml(offer.note)}</div>`;
         }
         html += `<div class="ench-tags" style="margin-top:10px;">${offer.enchants.map(e => `<span class="ench-tag">${escapeHtml(ENCH[e.id].name)} <span class="lvl">${roman(e.level)}</span></span>`).join('')}</div>`;
 
         const scoreCls = pct === 100 ? 'badge-ideal' : (pct >= 50 ? 'badge-upgrade' : 'badge-owned');
         html += `<div class="badge-list">
-          <span class="badge ${scoreCls}">🎯 ${score.matched.length}/${score.total} idéal (${pct}%)</span>
+          <span class="badge ${scoreCls}">${score.matched.length}/${score.total} idéal (${pct}%)</span>
         </div>`;
         if (score.missing.length){
           html += `<div class="card-sub" style="margin-top:6px;">Il manque : ${score.missing.map(m => escapeHtml(ENCH[m.id].name) + ' ' + roman(m.level)).join(', ')}</div>`;
@@ -1547,7 +1558,7 @@
         </div>
       </div>`;
       if (offer.note){
-        html += `<div class="card-sub" style="margin-top:6px;">📝 ${escapeHtml(offer.note)}</div>`;
+        html += `<div class="card-sub" style="margin-top:6px;">${escapeHtml(offer.note)}</div>`;
       }
       const badges = offerBadges(offer);
       html += `<div class="badge-list">${badges.map(b => `<span class="badge ${b.cls}">${escapeHtml(b.text)}</span>`).join('')}</div>`;
@@ -1735,7 +1746,7 @@
         const book = findBookFor(entry.id, entry.level);
         if (book){
           rows += `<li class="ideal-row has-book">
-            <span class="mark">📚</span>
+            <span class="mark">●</span>
             <span>${escapeHtml(ENCH[entry.id].name)} ${roman(entry.level)}${have ? ' (actuellement ' + roman(have) + ')' : ''} — livre en réserve (niveau ${roman(book.level)})</span>
           </li>`;
           return;
@@ -1756,7 +1767,7 @@
       let overrideHtml = '';
       if (overridable.length){
         overrideHtml = `<details class="pref-override">
-          <summary>⚙️ Préférences spécifiques à cet objet${Object.keys(item.prefOverrides || {}).some(k => overridable.some(g => g.id === k)) ? ' (personnalisées)' : ''}</summary>
+          <summary>Préférences spécifiques à cet objet${Object.keys(item.prefOverrides || {}).some(k => overridable.some(g => g.id === k)) ? ' (personnalisées)' : ''}</summary>
           <div class="pref-override-grid">
             ${overridable.map(g => `
               <div class="pref-item">
