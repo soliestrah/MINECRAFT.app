@@ -43,6 +43,37 @@
     outline-offset:2px;
   }
 
+nav.toolbar{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    row-gap:6px;
+    gap:18px;
+    padding:12px 20px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:0.8rem;
+  }
+  nav.toolbar a{
+    color:var(--muted);
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:4px 8px;
+    border-radius:6px;
+    transition:color 0.15s ease, background 0.15s ease;
+  }
+  nav.toolbar a:hover{
+    color:var(--gold);
+    background:var(--panel);
+  }
+  nav.toolbar a.home{
+    color:var(--text);
+    font-weight:600;
+  }
+
   /* ===================== LAYOUT ===================== */
   .app{
     display:flex;
@@ -499,7 +530,7 @@
   
   <nav class="toolbar">
   <a href="index.html" class="home">Établi</a>
-    <a href="better.html">nether</a>
+    <a href="tunnels-nether.html">Nether</a>
   <a href="enchantements.html">Enchantements</a>
   <a href="bloc-notes.html">Bloc-notes</a>
 </nav>
